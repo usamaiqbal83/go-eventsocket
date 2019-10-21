@@ -188,9 +188,11 @@ func (h *Connection) readOne() bool {
 		}
 		h.cmd <- resp
 	case "api/response":
-		if string(resp.Body[:2]) == "-E" {
-			h.err <- errors.New(string(resp.Body)[5:])
-			return true
+		if len(resp.Body) >= 2 {
+			if string(resp.Body[:2]) == "-E" {
+				h.err <- errors.New(string(resp.Body)[5:])
+				return true
+			}
 		}
 		copyHeaders(&hdr, resp, false)
 		h.api <- resp
